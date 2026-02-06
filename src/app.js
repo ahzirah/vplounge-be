@@ -45,6 +45,17 @@ function createApp() {
   app.get("/health", (req, res) => res.json({ ok: true }));
 
   // Routes
+
+  const { pool } = require("./db/pool");
+
+app.get("/db-test", async (req, res) => {
+  const r = await pool.query("SELECT NOW() as now");
+  res.json({ ok: true, now: r.rows[0].now });
+});
+
+  app.get("/", (req, res) => {
+    res.json({ message: "VPLounge API is running", health: "/health" });
+  });
   app.use("/api", waitlistRoutes);
 
   return app;

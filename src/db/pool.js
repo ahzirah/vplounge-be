@@ -1,10 +1,12 @@
 const { Pool } = require("pg");
 
-const isProd = process.env.NODE_ENV === "production";
-
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: isProd ? { rejectUnauthorized: false } : undefined,
+  host: process.env.PGHOST,
+  port: Number(process.env.PGPORT),
+  database: process.env.PGDATABASE,
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  ssl: { rejectUnauthorized: false },
 });
 
 module.exports = { pool };

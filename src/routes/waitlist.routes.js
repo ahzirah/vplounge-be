@@ -30,21 +30,26 @@ router.post("/waitlist", async (req, res) => {
   } = parsed.data;
 
   try {
-    await pool.query(
-      `INSERT INTO waitlist_signups (email, role, pet_type, location, ref_source, ref_campaign)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       ON CONFLICT (email) DO NOTHING`,
-      [
-        email.toLowerCase(),
-        role ?? null,
-        petType ?? null,
-        location ?? null,
-        refSource ?? null,
-        refCampaign ?? null,
-      ]
-    );
-
-    return res.status(200).json({ message: "You're on the waitlist 🎉" });
+    const result = await pool.query(
+        `INSERT INTO waitlist_signups (email, role, pet_type, location, ref_source, ref_campaign)
+         VALUES ($1, $2, $3, $4, $5, $6)
+         ON CONFLICT (email) DO NOTHING
+         RETURNING id`,
+        [
+          email.toLowerCase(),
+          role ?? null,
+          petType ?? null,
+          location ?? null,
+          refSource ?? null,
+          refCampaign ?? null,
+        ]
+      );
+      
+      if (result.rowCount === 0) {
+        return res.status(200).json({ message: "You're already on the waitlist" });
+      }
+      
+      return res.status(200).json({ message: "You're on the waitlist" });
   } catch (err) {
     console.error("Waitlist insert error:", err);
     return res.status(500).json({ message: "Server error" });
@@ -74,9 +79,13 @@ router.get("/waitlist/stats", async (req, res) => {
       total: totalRes.rows[0].total,
       byRole: byRoleRes.rows,
     });
-  } catch (err) {
-    console.error("Stats error:", err);
-    return res.status(500).json({ message: "Server error" });
+} catch (err) {
+    console.error("Waitlist insert error:", err); // <-- keep
+    return res.status(500).json({
+      message: "Server error",
+      error: err.message,
+      code: err.code,
+    });
   }
 });
 
