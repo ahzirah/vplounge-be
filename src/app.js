@@ -48,10 +48,15 @@ function createApp() {
 
   const { pool } = require("./db/pool");
 
-app.get("/db-test", async (req, res) => {
-  const r = await pool.query("SELECT NOW() as now");
-  res.json({ ok: true, now: r.rows[0].now });
-});
+  app.get("/db-test", async (req, res) => {
+    try {
+      const r = await pool.query("SELECT NOW() as now");
+      res.json({ ok: true, now: r.rows[0].now });
+    } catch (err) {
+      console.error("DB TEST ERROR:", err);
+      res.status(500).json({ ok: false, error: err.message, code: err.code });
+    }
+  });
 
   app.get("/", (req, res) => {
     res.json({ message: "VPLounge API is running", health: "/health" });
