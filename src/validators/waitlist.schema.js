@@ -1,19 +1,26 @@
 const { z } = require("zod");
 
-const waitlistSchema = z.object({
-  email: z.string().email().max(254),
+const Roles = z.enum(["pet_owner", "vet", "clinic"]);
 
-  // Optional fields for segmentation (nice for traction evidence)
-  role: z.string().max(30).optional(),     // pet_owner | vet | clinic
-  petType: z.string().max(30).optional(),  // dog | cat | other
-  location: z.string().max(120).optional(),
+const base = z.object({
+  email: z.string().email(),
+  role: Roles.optional().nullable(),
+  petType: z.string().optional().nullable(),
+  location: z.string().min(1).optional().nullable(),
+  website: z.string().optional().nullable(),
+  refSource: z.string().optional().nullable(),
+  refCampaign: z.string().optional().nullable(),
+});
 
-  // Optional tracking
-  refSource: z.string().max(80).optional(),
-  refCampaign: z.string().max(80).optional(),
-
-  // Honeypot field: should always be empty
-  website: z.string().max(0).optional(),
+const waitlistSchema = base.superRefine((data, ctx) => {
+  // If role is pet_owner, petType must be provided
+  if (data.role === "pet_owner" && (!data.petType || data.petType.trim() === "")) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["petType"],
+      message: "petType is required for pet owners",
+    });
+  }
 });
 
 module.exports = { waitlistSchema };

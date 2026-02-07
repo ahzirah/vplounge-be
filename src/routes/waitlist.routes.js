@@ -46,10 +46,10 @@ router.post("/waitlist", async (req, res) => {
       );
       
       if (result.rowCount === 0) {
-        return res.status(200).json({ message: "You're already on the waitlist" });
+        return res.status(409).json({ message: "You're already on the waitlist" });
       }
       
-      return res.status(200).json({ message: "You're on the waitlist" });
+      return res.status(201).json({ message: "You're on the waitlist" });
   } catch (err) {
     console.error("Waitlist insert error:", err);
     return res.status(500).json({ message: "Server error" });
