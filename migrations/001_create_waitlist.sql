@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS waitlist_signups (
   email TEXT NOT NULL UNIQUE,
   role TEXT NULL,
   pet_type TEXT NULL,
+  interest TEXT NULL,
   location TEXT NULL,
   ref_source TEXT NULL,
   ref_campaign TEXT NULL,
