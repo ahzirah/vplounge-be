@@ -1,11 +1,20 @@
 const { z } = require("zod");
 
 const Roles = z.enum(["pet_owner", "vet", "clinic"]);
+const Interests = z.enum([
+  "digital_health_records",
+  "ai_symptom_checker",
+  "smart_reminders",
+  "televet_consultations",
+  "vet_directory_and_jobs",
+  "shop_trusted_essentials",
+]);
 
 const base = z.object({
   email: z.string().email(),
   role: Roles.optional().nullable(),
   petType: z.string().optional().nullable(),
+  interest: Interests.optional().nullable(),
   location: z.string().min(1).optional().nullable(),
   website: z.string().optional().nullable(),
   refSource: z.string().optional().nullable(),

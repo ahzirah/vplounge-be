@@ -23,6 +23,7 @@ router.post("/waitlist", async (req, res) => {
   const {
     email,
     role,
+    interest,
     petType,
     location,
     refSource,
@@ -31,8 +32,8 @@ router.post("/waitlist", async (req, res) => {
 
   try {
     const result = await pool.query(
-        `INSERT INTO waitlist_signups (email, role, pet_type, location, ref_source, ref_campaign)
-         VALUES ($1, $2, $3, $4, $5, $6)
+        `INSERT INTO waitlist_signups (email, role, pet_type, interest,location, ref_source, ref_campaign)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
          ON CONFLICT (email) DO NOTHING
          RETURNING id`,
         [
