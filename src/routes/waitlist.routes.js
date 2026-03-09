@@ -40,6 +40,7 @@ router.post("/waitlist", async (req, res) => {
           email.toLowerCase(),
           role ?? null,
           petType ?? null,
+          interest ?? null,
           location ?? null,
           refSource ?? null,
           refCampaign ?? null,
